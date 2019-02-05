@@ -12,10 +12,11 @@
  * @property {Object[]} points - Array of points already plotted
  * @property {Number[]} active - Array of active points indices
  * @property {Number[]} grid - Grid array of point indices
+ * @author Matthew Page <work@mjp.co>
  */
 class PoissonDisc {
 	/**
-	 * Create a new sampler
+	 * Create a new disc sampler
 	 *
 	 * @param {Number} w - Width of the display in pixels
 	 * @param {Number} h - Height of the display in pixels
@@ -45,7 +46,7 @@ class PoissonDisc {
 		this.active = [];
 		this.grid = [];	
 		this.initialiseGrid();
-		this.makeFirstPoint();			
+		this.addPoint(this.getRandom(0, this.width), this.getRandom(0, this.height));		
 	}
 	/**
 	 * Run the algorithm till the end
@@ -95,16 +96,20 @@ class PoissonDisc {
 					let newGridX = Math.floor(newX / this.cellSize);
 					let newGridY = Math.floor(newY / this.cellSize);
 
-					if(newX > 0 && newX < this.width && newY > 0 && newY < this.height) {
+					if( ( newX > 0 ) && ( newX < this.width ) && ( newY > 0 ) && ( newY < this.height ) ) {
 						
 						/* It is inside the screen area */
+						
 						if(this.grid[newGridY][newGridX] < 0) {
 							
 							/* There is not a point at this grid reference - get the neighbours */
-							for(let i = -1; i <= 1; i++) {
-								for(let j = -1; j <= 1; j++) {
+							
+							for(let i=-1; i<=1; i++) {
+								
+								for(let j=-1; j<=1; j++) {
 									
 									/* Each neighbour grid location */
+									
 									let neighbourGridX = newGridX+j;
 									let neighbourGridY = newGridY+i;
 
@@ -113,60 +118,62 @@ class PoissonDisc {
 										&& (( neighbourGridX !== newGridX ) || ( neighbourGridY !== newGridY )) ) {
 
 										/* Neighbour is within the grid and not the centre point */
+										
 										if(this.grid[neighbourGridY][neighbourGridX] >= 0) {
 
 											/* It has a point in it - check how far away it is */
+											
 											let neighbourIndex = this.grid[neighbourGridY][neighbourGridX];
 											let neighbour = this.points[neighbourIndex];
 											let dist = Math.sqrt( ((newX - neighbour.px)*(newX - neighbour.px)) +
 																  ((newY - neighbour.py)*(newY - neighbour.py)) );
-
+											
+											/* Invalid, to close to a neighbour point */
 											if(dist < this.r) pointValid = false;
 										}
 									}
 								}
 							} 
 						} else {
-							/* Invalid, there is a point already in this cell */
+							/* Invalid, there is already a point in this cell */
 							pointValid = false;
 						}
 					} else {
-						/* Point is outside the grid */
+						/* Invalid, point is outside the grid */
 						pointValid = false;
 					}
 					if(pointValid) {
+						/* Valid, add this point */
 						foundNewPoint = true;
-
-						/* Add to points, grid and active list */
-						this.points.push({ px: newX, py: newY, gx: newGridX, gy: newGridY });
-						let pointIndex = this.points.length-1;
-						this.grid[newGridY][newGridX] = pointIndex;
-						this.active.push(pointIndex);
+						this.addPoint(newX, newY);
 					} 
 				} // For tries...
-
+				
 				if(!foundNewPoint) {
-					/* Didn't find a new Point - remove this one from Active list */
+					
+					/* Didn't find a new point after k tries - remove this point from Active list */
 					this.active.splice(randomActive, 1);
 				}
 			}
 		} // n loop
 	}
 	/**
-	 * Make the first random point in the grid
+	 * Add a new point to the points, grid and active arrays. Points array holds the
+	 * point data and grid / active hold indices to the points array.
+	 *
+	 * @param {Number} x - The pixel X position of the point
+	 * @param {Number} y - The pixel Y position of the point
 	 */
-	makeFirstPoint() {
-		let px = this.getRandom(0, this.width);
-		let py = this.getRandom(0, this.height);
-
-		let gx = Math.floor(px / this.cellSize);
-		let gy = Math.floor(py / this.cellSize);
-		
-		let point = { px: px, py: py, gx: gx, gy: gy };
-		
+	addPoint(x, y) {
+		let point = { 
+			px: parseInt(x),
+			py: parseInt(y),
+			gx: Math.floor(parseInt(x) / this.cellSize),
+			gy: Math.floor(parseInt(y) / this.cellSize),
+		};
+		let pointIndex = this.points.length;
 		this.points.push(point);		
-		let pointIndex = this.points.length-1;
-		this.grid[gy][gx] = pointIndex;
+		this.grid[point.gy][point.gx] = pointIndex;
 		this.active.push(pointIndex);
 	}
 	/**
