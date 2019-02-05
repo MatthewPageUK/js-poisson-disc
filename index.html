@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>Javascript - Poisson Disc Sampling Algorithm</title>
+		<link href="css/main.css" rel="stylesheet">
+		<meta name="author" content="Matthew Page">
+		<link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
+	</head>
+	<body>	
+		<header>
+			<h1>Fast Poisson Disc Sampling in Arbitrary Dimensions</h1>
+			<p>How to make randomly distributed points less random and more evenly spread out.</p>
+		</header>
+		
+		<section class="random">
+			<h2>Points distributed by random selection only</h2>
+			<canvas id="random"></canvas>
+			<p>With only random distribution the results can include overlapping points, clusters of points 
+				and a somewhat uneven distribution throughout the grid. If you needed a more even distribution 
+				you could check each new point against every other point to prevent overlaps or clustering. 
+				This has an exponential problem <em>O(n<sup>2</sup>)</em> and makes the algorithm
+				unscalable and inefficient. The solution is the Poisson Disc Sampling Algorithm. </p>
+		</section>
+
+		<section class="poisson">
+			<h2>Points distributed by Poisson Disc Sampling</h2>
+			<canvas id="poisson"></canvas>
+			<p>Here we can see a considerably more even, yet still random distribution of points. By using a background 
+				grid method each new point can easily check its immediate neighbours without having to worry about all 
+				the points on the grid. This makes the algorithm much faster and scalable and is now an <em>O(2n)</em> 
+				operation.</p>
+			<p>Draw random points with a minimum separation of (<em>r</em>) 
+				<button onclick="poissonReset(5)">5</button>
+				<button onclick="poissonReset(10)">10</button>
+				<button onclick="poissonReset(15)">15</button>
+				<button onclick="poissonReset(25)">25</button>
+			</p>
+		</section>
+
+		<section class="slowmo">
+			<h2>Slow Motion Poisson Disc Sampling</h2>
+			<canvas id="poissonSlow"></canvas>
+			<p>Watch the algorithm solve the puzzle one step at a time. Red points are Active and will 
+				be visited again to check if another point can be inserted nearby. Once the algorithm 
+				has decided a point cannot have any more neighbours it changes to black and becomes a fixed, 
+				closed point on the grid. Once there are no more Active points the solution has been reached.</p>
+		</section>
+		
+		<section class="variables">
+			<h2>Variables</h2>
+			<p><em>r</em> - The minimum distance between points.</p>
+			<p><em>k</em> - The number of attempts to create a new point before deciding the current point should be closed.</p>
+			<p><em>n</em> - The number of dimensions the grid has. This algorithm can distribute points in 3d, 4d, 5d etc. I'll do another example for 3d.</p>
+			<p><em>cell size</em> - The size of the grid cells is calculated by <em>r / sqrt(n)</em></p>
+		</section>
+		<section class="algorithm">
+			<h2>The Algorithm</h2>
+			<p>The algorithm takes as input the extent of the sample domain in <em>R<sup>n</sup></em>, 
+				the minimum distance <em>r</em> between samples, and a constant <em>k</em> as the limit of 
+				samples to choose before rejection in the algorithm (typically <em>k</em> = 30).</p>
+			<p>Step 0. Initialize an n-dimensional background grid for storing
+				samples and accelerating spatial searches. We pick the cell size to
+				be bounded by <em>r/√n</em>, so that each grid cell will contain at most
+				one sample, and thus the grid can be implemented as a simple n-dimensional 
+				array of integers: the default −1 indicates no sample, a
+				non-negative integer gives the index of the sample located in a cell.</p>
+			<p>Step 1. Select the initial sample, <em>x<sub>0</sub></em>, randomly chosen uniformly
+				from the domain. Insert it into the background grid, and initialize
+				the “active list” (an array of sample indices) with this index (zero).</p>
+			<p>Step 2. While the active list is not empty, choose a random index
+				from it (say <em>i</em>). Generate up to <em>k</em> points chosen uniformly from the
+				spherical annulus between radius <em>r</em> and <em>2r</em> around <em>x<sub>i</sub></em>. For each
+				point in turn, check if it is within distance <em>r</em> of existing samples
+				(using the background grid to only test nearby samples). If a point
+				is adequately far from existing samples, emit it as the next sample
+				and add it to the active list. If after <em>k</em> attempts no such point is
+				found, instead remove <em>i</em> from the active list</p>
+		</section>
+		<section class="usage">
+			<h2>Usage</h2>
+			<code>
+let width = 400;
+let height = 400;
+let r = 25;
+let k = 30;
+let n = 2;
+let myPoisson = new PoissonDisc(width, height, r, k, n);
+myPoisson.run();
+
+Points are available in the myPoisson.points array. Point.px and Point.py are the x and y position.
+			</code>		
+		</section>
+		<section class="code">
+			<h2>Download the source code</h2>
+			<p>Please visit GitHub to download the full source code. Released as public domain for anyone to use.</p>
+					<p class="codeLinks">
+						Interested in the code?<br>
+						<a href="https://github.com/MatthewPageUK/js-astar" class="imgbut github" target="_blank">Source code</a>
+						<a href="./docs/" class="imgbut docs" target="_blank">Documentation</a>
+					</p>	
+		</section>
+		<section class="credits">
+			<h2>Credits and links</h2>
+			<p>Fast Poisson Disc Sampling in Arbitrary Dimensions By Robert Bridson ~ University of British Columbia<br />
+				<a href="https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf" target="_blank">Download the PDF</a></p>
+			<p>Thanks to all the internet people who posted the videos, articles and 
+				examples for me to learn from. Hopefully this example
+				can add to that knowledge base for future coders. Special thanks to 
+				Coding Challenge for this <a href="https://www.youtube.com/watch?v=flQgnCUxHlw">video</a>. If you like unicorns, rainbows and
+				 happy coding sessions they have lots of fun example to try.</p>
+		</section>
+
+		<footer>
+			<div class="col">
+				<div class="inner">	
+					<p class="author">By Matthew Page - <a href="http://www.mjp.co" target="_blank">www.mjp.co</a><br>
+						<a href="https://www.linkedin.com/in/matthew-page-71a2a3163/" class="imgbut linkedin" target="_blank">Linked In</a> 
+						<a href="https://twitter.com/matthewpage_web" class="imgbut twitter" target="_blank">Twitter</a> 
+						<a href="https://github.com/MatthewPageUK/" class="imgbut github" target="_blank">Github</a>
+						<a href="https://www.youtube.com/user/mattandhisdog" class="imgbut youtube" target="_blank">Youtube</a>
+					</p>				
+				</div>
+			</div>
+			<div class="co2">
+				<div class="inner">	
+				
+				</div>
+			</div>
+			<p class="releaseNotes"><small>Last updated 4 Feb 2019. Released as Public Domain. Free to use.</small></p>
+		</footer>
+		
+		<script src="js/poisson-disc.js" type="text/javascript"></script>
+		<script type="text/javascript">
+
+			const animationDelay = 100;
+			const width = parseInt(window.innerWidth);
+			const height = 400;			
+			const randomCanvas = document.getElementById("random");
+			const randomCTX = randomCanvas.getContext("2d");
+			const poissonCanvas = document.getElementById("poisson");
+			const poissonCTX = poissonCanvas.getContext("2d");
+			const poissonSlowCanvas = document.getElementById("poissonSlow");
+			const poissonSlowCTX = poissonSlowCanvas.getContext("2d");
+			
+			randomCanvas.width = width;
+			randomCanvas.height = height;
+			poissonCanvas.width = width;
+			poissonCanvas.height = height;
+			poissonSlowCanvas.width = width;
+			poissonSlowCanvas.height = height;
+			
+			let poissonR = 10;
+			let frame = 0;
+			let myPoisson = false;
+			let myPoissonSlow = new PoissonDisc(width, height, poissonR, 30, 2);
+
+			function animationLoop() {
+				if(frame % 25 == 1) {
+					myPoisson = new PoissonDisc(width, height, poissonR, 30, 2);
+					myPoisson.run();
+					drawPoisson();
+					drawRandom(myPoisson.points.length);
+				}
+				
+				myPoissonSlow.step(5);
+				if(myPoissonSlow.active.length < 1) {
+					myPoissonSlow = new PoissonDisc(width, height, poissonR, 30, 2);	
+				}
+				drawPoissonSlow();
+			
+				frame+=1;
+				setTimeout(animationLoop, animationDelay);
+			}
+
+			function poissonReset(r) {
+				poissonR = parseInt(r);
+				myPoissonSlow = new PoissonDisc(width, height, poissonR, 30, 2);
+				myPoisson = new PoissonDisc(width, height, poissonR, 30, 2);				
+			}
+			
+			function drawPoissonSlow() {
+				poissonSlowCTX.clearRect(0, 0, width, height);
+				poissonSlowCTX.lineWidth = 1;
+				poissonSlowCTX.strokeStyle = "grey";
+				
+				poissonSlowCTX.beginPath();
+				for(let y = 0; y < myPoissonSlow.height; y+=myPoissonSlow.cellSize) {
+					poissonSlowCTX.moveTo(0, y);
+					poissonSlowCTX.lineTo(myPoissonSlow.width, y);
+				} 
+				for(let x = 0; x < myPoissonSlow.width; x+=myPoissonSlow.cellSize) {					
+					poissonSlowCTX.moveTo(x, 0);
+					poissonSlowCTX.lineTo(x, myPoissonSlow.height);
+				} 
+				poissonSlowCTX.stroke();					
+
+				poissonSlowCTX.fillStyle = "black";
+				for(let i = 0; i < myPoissonSlow.points.length; i+=1) {
+					if(myPoissonSlow.points[i]) {
+						poissonSlowCTX.fillRect(myPoissonSlow.points[i].px-2, myPoissonSlow.points[i].py-2, 4, 4);						
+					}
+				}
+				poissonSlowCTX.fillStyle = "red";
+				for(let i = 0; i < myPoissonSlow.active.length; i+=1) {
+					if(myPoissonSlow.active[i]) {
+						poissonSlowCTX.beginPath();
+						poissonSlowCTX.arc(myPoissonSlow.points[myPoissonSlow.active[i]].px, myPoissonSlow.points[myPoissonSlow.active[i]].py,
+										   4, 0, 2 * Math.PI);
+						poissonSlowCTX.fill();
+					}
+				}
+			}			
+			
+			function drawPoisson() {
+				poissonCTX.clearRect(0, 0, width, height);			
+				poissonCTX.fillStyle = "white";
+				poissonCTX.strokeStyle = "black";
+				poissonCTX.lineWidth = 1;
+				for(let i = 0; i < myPoisson.points.length; i+=1) {
+					if(myPoisson.points[i]) {
+						poissonCTX.beginPath();
+						poissonCTX.arc(myPoisson.points[i].px, myPoisson.points[i].py, 3, 0, 2 * Math.PI);
+						poissonCTX.fill();
+						poissonCTX.stroke();
+					}
+				}
+			}
+			/**
+			 * Draw the random grid with x number of points
+			 */
+			function drawRandom(x) {
+				randomCTX.clearRect(0, 0, width, height);
+				randomCTX.fillStyle = "white";
+				randomCTX.strokeStyle = "black";
+				randomCTX.lineWidth = 1;
+				for(let n = 0; n < x; n++) {
+					let x = Math.floor(Math.random()*width);
+					let y = Math.floor(Math.random()*height);
+					randomCTX.beginPath();
+					randomCTX.arc(x, y, 3, 0, 2 * Math.PI);
+					randomCTX.fill();
+					randomCTX.stroke();
+				}
+			}
+
+			animationLoop();
+	
+		</script>
+	</body>
+</html>

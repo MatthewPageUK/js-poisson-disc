@@ -1,0 +1,110 @@
+body {
+	background-color: darkmagenta;
+	color: white;
+	padding: 0px;
+	margin: 0px;
+	font-family: 'Exo 2', serif;
+	text-align: center;
+}
+
+div, section, h1, h2, h3, h4, code, p, footer, header {
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	padding: 0px;
+	margin: 0px;
+}
+em {
+	font-family: serif;
+	font-weight: bold;
+}
+header h1 {
+	padding: 10px;
+	//background-color: darkmagenta;
+	//color: white;
+}
+header p {
+	//background-color: white;
+	//color: darkmagenta;
+	padding: 10px;
+}
+section h2 {
+	padding: 10px 10px 20px 10px;
+	background-color: rgb(100,0,100);
+}
+section p {
+	padding: 20px;
+	text-align: left;
+	max-width: 800px;
+	margin: 0 auto;
+	line-height: 1.5rem;
+}
+section a {
+	color: white;
+}
+section p#pointsDrawn {
+	padding: 2px 20px;
+	text-align: center;
+	font-size: 0.8rem;
+	margin: 0px;
+}
+
+canvas {
+	width: 100%;
+	height: 400px;
+	background-color: lightblue;
+}
+
+
+
+section {
+	width: 100%;
+}
+section.usage, section.variables {
+	background-color: white;
+}
+section.variables p {
+	color: black;
+}
+code {
+	display: block;
+	white-space: pre-wrap; 
+	text-align: left;
+	max-width: 800px;
+	margin: 0 auto;
+	color: black;	
+	padding: 20px;
+}
+
+footer {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 40px;
+	font-size: 0.8rem;
+	z-index: 1000;
+	background-color: black;
+	color: white;
+}
+div.sections {
+
+	width: 100%;
+	
+}
+
+
+
+
+
+
+
+
+
+@media screen and (min-width: 840px) {
+
+	
+
+	
+
+}
