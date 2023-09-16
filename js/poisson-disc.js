@@ -23,8 +23,10 @@ class PoissonDisc {
 	 * @param {Number} r - The minimum distance between points
 	 * @param {Number} k - Number of tries to make a new point before giving up
 	 * @param {Number} n - n-dimensional grid
-	 */	
-	constructor(w, h, r, k, n) {	
+	 * @param {Number} firstX - The first point X position (optional)
+	 * @param {Number} firstY - The first point Y position (optional)
+	 */
+	constructor(w, h, r, k, n, firstX = null, firstY = null) {
 		this.width = w;
 		this.height = h;
 		this.r = r;
@@ -36,6 +38,8 @@ class PoissonDisc {
 		this.points = [];
 		this.active = [];
 		this.grid = [];
+		this.firstX = firstX;
+		this.firstY = firstY;
 		this.reset();
 	}
 	/**
@@ -44,9 +48,13 @@ class PoissonDisc {
 	reset() {
 		this.points = [];
 		this.active = [];
-		this.grid = [];	
+		this.grid = [];
 		this.initialiseGrid();
-		this.addPoint(this.getRandom(0, this.width), this.getRandom(0, this.height));		
+		if (this.firstX !== null && this.firstY !== null) {
+			this.addPoint(this.firstX, this.firstY);
+		} else {
+			this.addPoint(this.getRandom(0, this.width), this.getRandom(0, this.height));
+		}
 	}
 	/**
 	 * Run the algorithm till the end
@@ -61,10 +69,10 @@ class PoissonDisc {
 	 * Take a single or n steps through the algorithm
 	 */
 	step(n) {
-		
+
 		/* Take one or 'n' steps */
 		for(let l=0; l<n; l+=1) {
-	
+
 			/* While there are still active points */
 			if(this.active.length > 0) {
 
@@ -84,7 +92,7 @@ class PoissonDisc {
 					/* Uniformly distribute the angle or random, not clear in the docs */
 					/* let newAngle = Math.floor(Math.random()*(Math.PI*2)); */
 					let newAngle = tries*((Math.PI*2)/this.k);
-					
+
 					/* Get a random distance r to 2r */
 					let newDist = this.getRandom(this.r, this.r*2);
 
@@ -97,43 +105,43 @@ class PoissonDisc {
 					let newGridY = Math.floor(newY / this.cellSize);
 
 					if( ( newX > 0 ) && ( newX < this.width ) && ( newY > 0 ) && ( newY < this.height ) ) {
-						
+
 						/* It is inside the screen area */
-						
+
 						if(this.grid[newGridY][newGridX] < 0) {
-							
+
 							/* There is not a point at this grid reference - get the neighbours */
-							
+
 							for(let i=-1; i<=1; i++) {
-								
+
 								for(let j=-1; j<=1; j++) {
-									
+
 									/* Each neighbour grid location */
-									
+
 									let neighbourGridX = newGridX+j;
 									let neighbourGridY = newGridY+i;
 
-									if( ( neighbourGridX >= 0 ) && ( neighbourGridY >= 0 ) 
-										&& ( neighbourGridX < this.cols ) && ( neighbourGridY < this.rows ) 
+									if( ( neighbourGridX >= 0 ) && ( neighbourGridY >= 0 )
+										&& ( neighbourGridX < this.cols ) && ( neighbourGridY < this.rows )
 										&& (( neighbourGridX !== newGridX ) || ( neighbourGridY !== newGridY )) ) {
 
 										/* Neighbour is within the grid and not the centre point */
-										
+
 										if(this.grid[neighbourGridY][neighbourGridX] >= 0) {
 
 											/* It has a point in it - check how far away it is */
-											
+
 											let neighbourIndex = this.grid[neighbourGridY][neighbourGridX];
 											let neighbour = this.points[neighbourIndex];
 											let dist = Math.sqrt( ((newX - neighbour.px)*(newX - neighbour.px)) +
 																  ((newY - neighbour.py)*(newY - neighbour.py)) );
-											
+
 											/* Invalid, to close to a neighbour point */
 											if(dist < this.r) pointValid = false;
 										}
 									}
 								}
-							} 
+							}
 						} else {
 							/* Invalid, there is already a point in this cell */
 							pointValid = false;
@@ -146,11 +154,11 @@ class PoissonDisc {
 						/* Valid, add this point */
 						foundNewPoint = true;
 						this.addPoint(newX, newY);
-					} 
+					}
 				} // For tries...
-				
+
 				if(!foundNewPoint) {
-					
+
 					/* Didn't find a new point after k tries - remove this point from Active list */
 					this.active.splice(randomActive, 1);
 				}
@@ -165,19 +173,19 @@ class PoissonDisc {
 	 * @param {Number} y - The pixel Y position of the point
 	 */
 	addPoint(x, y) {
-		let point = { 
+		let point = {
 			px: parseInt(x),
 			py: parseInt(y),
 			gx: Math.floor(parseInt(x) / this.cellSize),
 			gy: Math.floor(parseInt(y) / this.cellSize),
 		};
 		let pointIndex = this.points.length;
-		this.points.push(point);		
+		this.points.push(point);
 		this.grid[point.gy][point.gx] = pointIndex;
 		this.active.push(pointIndex);
 	}
 	/**
-	 * Initialise the empty background grid array 
+	 * Initialise the empty background grid array
 	 */
 	initialiseGrid() {
 		for(let y = 0; y <= this.rows; y+=1) {
