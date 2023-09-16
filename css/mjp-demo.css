@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+button {
+    @apply inline px-2 py-0 border border-zinc-200 hover:text-amber-400
+}
+
+/*
+body {
+	background-color: #27272a;
+	color: white;
+	padding: 0 0 60px 0;
+	margin: 0px;
+	font-family: 'Exo 2', serif;
+	text-align: center;
+}
+div, section, h1, h2, h3, code, p, footer, header, ul, li {
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	padding: 0px;
+	margin: 0px;
+}
+em { font-family: serif; }
+a { color: darkmagenta; }
+a:hover { color: magenta; text-decoration: none; }
+a:active { color: magenta; }
+canvas {
+	width: 100%;
+	height: 400px;
+	background-color: lightblue;
+}
+code {
+	display: block;
+	white-space: pre-wrap;
+	text-align: left;
+	max-width: 800px;
+	margin: 0 auto;
+	color: black;
+	padding: 20px;
+}
+header h1 { padding: 10px; }
+header p { padding: 10px 10px 20px 10px; }
+section { width: 100%; }
+section h2 {
+	padding: 10px 10px 20px 10px;
+	background-color: rgb(100,0,100);
+	color: white;
+}
+section p {
+	padding: 20px;
+	text-align: left;
+	max-width: 800px;
+	margin: 0 auto;
+	line-height: 1.5rem;
+}
+section.white { background-color: white; }
+section.white p { color: black; }
+section.credits { font-size: 0.8rem; }
+section.credits p { text-align: center; }
+footer {
+	position: fixed;
+	padding: 8px 0 0 0;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 60px;
+	font-size: 0.8rem;
+	z-index: 1000;
+	background-color: black;
+	color: white;
+	border-top: 1px solid white;
+}
+footer a { color: yellow; text-decoration: none; }
+footer a:hover { color: magenta; }
+footer a:active { color: yellow; }
+
+@media screen and (min-width: 840px) {
+
+
+} */
